@@ -59,7 +59,7 @@ class ModelTests(TestCase):
             description = 'Test Recipe desc',
             time_minutes = 10,
             price = Decimal('5.60'),
-            
+            calories_per_serving = 100,
         )
         self.assertEqual(str(recipe),recipe.title)
 
@@ -69,3 +69,11 @@ class ModelTests(TestCase):
         tag = models.Tag.objects.create(user= user, name ='New Tag')
 
         self.assertEqual(str(tag),tag.name)
+
+    def test_create_ingredient(self):
+        """ test to create a new ingredient successfully """
+
+        user = get_user_model().objects.create(email = 'testuser@example.com', password='passtest123')
+        ingredient = models.Ingredient.objects.create(user=user, name = 'Test  Ingredient', )
+
+        self.assertEqual(str(ingredient), ingredient.name)

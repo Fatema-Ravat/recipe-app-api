@@ -94,19 +94,6 @@ class PrivateTagsAPITest(TestCase):
         self.assertFalse(Tag.objects.filter(id=tag.id).exists())
 
 
-    def create_tag(self):
-        """ test to create tag """
-
-        payload ={'name':'TestTag'}
-
-        res = self.client.create(TAGS_URL,payload)
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-
-        tag = Tag.objects.filter(id = res.data['id'])
-        
-        self.assertTrue(tag.exists())
-        self.assertEqual(tag.user,self.user)
-
 
 
     
