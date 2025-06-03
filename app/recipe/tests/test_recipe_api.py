@@ -399,6 +399,53 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotIn(test_ing, recipe.ingredients.all())
 
+    def test_filter_tags_for_recipe(self):
+        """ test for filtering recipe based on tag passed as params in request"""
+        r1 = create_recipe(user=self.user,title='Recipe1')
+        r2 = create_recipe(user=self.user, title = 'Recipe2')
+        r3 = create_recipe(user=self.user, title= 'Recipe3')
+
+        t1 = Tag.objects.create(user= self.user, name = 'tag1')
+        t2 = Tag.objects.create(user = self.user, name= 'Tag2')
+        r1.tags.add(t1)
+        r2.tags.add(t2)
+
+        params={'tags':f'{t1.id},{t2.id}'}
+        res = self.client.get(RECIPES_URL,params)
+        self.assertEqual(res.status_code,status.HTTP_200_OK)
+
+        s1 = RecipeSerializer(r1)
+        s2 = RecipeSerializer(r2)
+        s3 = RecipeSerializer(r3)
+
+        self.assertIn(s1.data,res.data)
+        self.assertIn(s2.data,res.data)
+        self.assertNotIn(s3.data,res.data)
+
+    def test_filter_ingredients_for_recipe(self):
+        """ test for filtering recipe based on ingredient ids passed as params in request"""
+        r1 = create_recipe(user=self.user,title='Recipe1')
+        r2 = create_recipe(user=self.user, title = 'Recipe2')
+        r3 = create_recipe(user=self.user, title= 'Recipe3')
+
+        i1 = Ingredient.objects.create(user= self.user, name = 'Ing1')
+        i2 = Ingredient.objects.create(user = self.user, name= 'Ing2')
+        r1.ingredients.add(i1)
+        r2.ingredients.add(i2)
+
+        params={'ingredients':f'{i1.id},{i2.id}'}
+        res = self.client.get(RECIPES_URL,params)
+        self.assertEqual(res.status_code,status.HTTP_200_OK)
+
+        s1 = RecipeSerializer(r1)
+        s2 = RecipeSerializer(r2)
+        s3 = RecipeSerializer(r3)
+
+        self.assertIn(s1.data,res.data)
+        self.assertIn(s2.data,res.data)
+        self.assertNotIn(s3.data,res.data)
+
+
 class TestRecipeImageAPI(TestCase):
     """ Tests for recipe images """
     def setUp(self):
